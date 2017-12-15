@@ -18,12 +18,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var labelY: UILabel!
     @IBOutlet weak var labelZ: UILabel!
 
-    @IBOutlet weak var sliderAcelerometroH: UISlider!
-    @IBOutlet weak var sliderAcelerometroV: UISlider!
+    @IBOutlet weak var sliderH: UISlider!
+    @IBOutlet weak var sliderV: UISlider!
 
     @IBOutlet weak var enviar: UISwitch!
-
-    let IP = "10.100.6.40"
+    @IBOutlet weak var servidor: UILabel!
+    
+    let IP = "192.168.1.103"
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,8 +32,10 @@ class ViewController: UIViewController {
 
         actualizarPantalla()
 
+        servidor.text = " "
+        
         // REF: Girar el slider: https://stackoverflow.com/a/25522456/5136913
-        self.sliderAcelerometroV.transform = CGAffineTransform(rotationAngle: .pi / 2)
+        self.sliderV.transform = CGAffineTransform(rotationAngle: .pi / 2)
 
     }
 
@@ -43,14 +46,18 @@ class ViewController: UIViewController {
     @IBAction func botonParar(_ sender: UIButton) {
         actualizarPantalla()
 
-        sliderAcelerometroH.value = 0
-        sliderAcelerometroV.value = 0
+        sliderH.value = 0
+        sliderV.value = 0
 
         timer?.invalidate()
         timer = nil
         n = 0
     }
-
+    
+    @IBAction func switchEnviar(_ sender: UISwitch) {
+        servidor.text = sender.isOn ? "IP: \(IP)" : " "
+    }
+    
     func actualizarPantalla(_ x: Double? = nil, _ y: Double? = nil, _ z: Double? = nil) {
 
         if let x = x {
@@ -103,8 +110,8 @@ class ViewController: UIViewController {
                                            // REF: https://stackoverflow.com/a/27339287/5136913
                                            self.actualizarPantalla(x, y, z)
 
-                                           self.sliderAcelerometroH.value = Float(y)
-                                           self.sliderAcelerometroV.value = Float(x)
+                                           self.sliderH.value = Float(y)
+                                           self.sliderV.value = Float(x)
 
                                            if self.enviar.isOn {
                                                // REF: Servidor: https://stackoverflow.com/a/44013423/5136913
