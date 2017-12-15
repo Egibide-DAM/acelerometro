@@ -29,9 +29,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
-        self.labelX.text = "x"
-        self.labelY.text = "y"
-        self.labelZ.text = "z"
+        actualizarPantalla()
 
         // REF: Girar el slider: https://stackoverflow.com/a/25522456/5136913
         self.sliderAcelerometroV.transform = CGAffineTransform(rotationAngle: .pi / 2)
@@ -43,9 +41,36 @@ class ViewController: UIViewController {
     }
 
     @IBAction func botonParar(_ sender: UIButton) {
+        actualizarPantalla()
+
+        sliderAcelerometroH.value = 0
+        sliderAcelerometroV.value = 0
+
         timer?.invalidate()
         timer = nil
         n = 0
+    }
+
+    func actualizarPantalla(_ x: Double? = nil, _ y: Double? = nil, _ z: Double? = nil) {
+
+        if let x = x {
+            self.labelX.text = String(format: "x: %.3f", x)
+        } else {
+            self.labelX.text = "x"
+        }
+
+        if let y = y {
+            self.labelY.text = String(format: "y: %.3f", y)
+        } else {
+            self.labelY.text = "y"
+        }
+
+        if let z = z {
+            self.labelZ.text = String(format: "z: %.3f", z)
+        } else {
+            self.labelZ.text = "z"
+        }
+
     }
 
     let motion = CMMotionManager()
@@ -76,9 +101,7 @@ class ViewController: UIViewController {
 
                                            // Use the motion data in your app.
                                            // REF: https://stackoverflow.com/a/27339287/5136913
-                                           self.labelX.text = String(format: "x: %.3f", x)
-                                           self.labelY.text = String(format: "y: %.3f", y)
-                                           self.labelZ.text = String(format: "z: %.3f", z)
+                                           self.actualizarPantalla(x, y, z)
 
                                            self.sliderAcelerometroH.value = Float(y)
                                            self.sliderAcelerometroV.value = Float(x)
