@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         // Convertir el valor del acelerómetro (-9.81 -> 9.81 ) al rango de las barras (0 -> 100)
         val g = 9.81
 
-        val X = ((x / g * 50) + 50).toInt()
+        val X = ((-x / g * 50) + 50).toInt()
         val Y = ((y / g * 50) + 50).toInt()
 
         seekBarH.progress = X

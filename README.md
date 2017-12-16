@@ -1,4 +1,4 @@
-# acelerómetro
+# Acelerómetro
 
 Ejemplo de uso del acelerómetro en iOS y Android.
 
