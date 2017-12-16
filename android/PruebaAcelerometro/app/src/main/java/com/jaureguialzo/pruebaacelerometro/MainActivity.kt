@@ -8,6 +8,11 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), SensorEventListener {
@@ -22,6 +27,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     var n = 0
 
+    // REF: Biblioteca de red Volley: https://developer.android.com/training/volley/index.html
+    var queue: RequestQueue? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,10 +42,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         servidor.text = " "
 
-        botonIniciar.setOnClickListener(){
-            mSensorManager!!.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        queue = Volley.newRequestQueue(this)
+
+        // Evento del boton Iniciar
+        botonIniciar.setOnClickListener() {
+            mSensorManager!!.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_GAME);
         }
 
+        // Evento del boton Parar
         botonParar.setOnClickListener() {
             mSensorManager!!.unregisterListener(this);
 
@@ -49,10 +61,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             n = 0
         }
 
-        enviar.setOnCheckedChangeListener(){ v, estado ->
-            servidor.text = if ( estado == true ) "IP: ${IP}" else " "
+        // Mostrar la dirección del servidor si se activa el check
+        enviar.setOnCheckedChangeListener() { v, estado ->
+            servidor.text = if (estado == true) "IP: ${IP}" else " "
         }
 
+        // Inicializar el gestor de sensores
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mSensor = mSensorManager!!.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -75,18 +89,40 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val y = event!!.values[1];
         val z = event!!.values[2];
 
-        actualizarPantalla(x,y,z)
+        actualizarPantalla(x, y, z)
 
+        // Convertir el valor del acelerómetro (-9.81 -> 9.81 ) al rango de las barras (0 -> 100)
         val g = 9.81
 
-        val X = ((x/g*50)+50).toInt()
-        val Y = ((y/g*50)+50).toInt()
+        val X = ((x / g * 50) + 50).toInt()
+        val Y = ((y / g * 50) + 50).toInt()
 
         seekBarH.progress = X
         seekBarV.progress = Y
 
-        if( enviar.isChecked ) {
-            Log.d(TAG,"Enviando${n}")
+        // Enviar los datos al servidor mediante Volley
+        if (enviar.isChecked) {
+
+            // REF: Añadir parámetros: https://mobikul.com/parameters-to-volley/
+            var url = "http://${IP}:3000/"
+
+            url += "?android=${n}"
+            url += "&x=${x}"
+            url += "&y=${y}"
+            url += "&z=${z}"
+
+            // Generar la petición y crear los listeners para ver qué ha pasado
+            val stringRequest = StringRequest(Request.Method.GET, url,
+                    Response.Listener<String> {
+                        Log.d(TAG, "Enviado: ${n}")
+                    },
+                    Response.ErrorListener {
+                        Log.e(TAG, "Error de envío: ${n}")
+                    }
+            )
+
+            // Encolar la petición HTTP
+            queue!!.add(stringRequest)
 
             n += 1
         }
