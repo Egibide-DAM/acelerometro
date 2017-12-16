@@ -119,10 +119,10 @@ class ViewController: UIViewController {
 
                                                // REF: Alamofire: https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#http-methods
                                                let parameters: Parameters = [
-                                                   "n": self.n,
-                                                   "x": x,
-                                                   "y": y,
-                                                   "z": z,
+                                                   "ios": self.n,
+                                                   "x": Float(x),
+                                                   "y": Float(y),
+                                                   "z": Float(z),
                                                ]
                                                Alamofire.request("http://\(self.IP):3000/", parameters: parameters)
                                                self.n += 1
