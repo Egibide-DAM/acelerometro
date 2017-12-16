@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         actualizarPantalla()
 
         // Desactivar la interacción con las barras
-        seekBarH.setOnTouchListener() { v, m -> true }
-        seekBarV.setOnTouchListener() { v, m -> true }
+        seekBarH.setOnTouchListener() { _, _ -> true }
+        seekBarV.setOnTouchListener() { _, _ -> true }
 
         servidor.text = " "
 
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
 
         // Mostrar la dirección del servidor si se activa el check
-        enviar.setOnCheckedChangeListener() { v, estado ->
+        enviar.setOnCheckedChangeListener() { _, estado ->
             servidor.text = if (estado == true) "IP: ${IP}" else " "
         }
 
@@ -86,8 +86,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
 
         val x = event!!.values[0];
-        val y = event!!.values[1];
-        val z = event!!.values[2];
+        val y = event.values[1];
+        val z = event.values[2];
 
         actualizarPantalla(x, y, z)
 
